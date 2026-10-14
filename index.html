@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STARK VISION — Умные AR-очки с персональным ИИ</title>
+    <!-- Tailwind CSS для аккуратных и современных стилей -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Подключаем чистые шрифты Inter и Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        brandBlue: '#0066FF',
+                        brandCyan: '#00E5FF',
+                        darkCard: '#121826',
+                        darkBg: '#0B0F17'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0B0F17;
+            color: #E2E8F0;
+        }
+
+        /* Аккуратный градиент для карточек */
+        .custom-card {
+            background: linear-gradient(180deg, rgba(18, 24, 38, 0.8) 0%, rgba(11, 15, 23, 0.9) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Эффект легкого подсвета при наведении */
+        .custom-card:hover {
+            border-color: rgba(0, 102, 255, 0.4);
+        }
+
+        /* Сетка сканера для симуляции HUD */
+        .hud-grid {
+            background-image: radial-gradient(rgba(0, 229, 255, 0.15) 1px, transparent 0);
+            background-size: 20px 20px;
+        }
+
+        /* Анимация сканирующего прицела */
+        @keyframes scanPulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+        .scan-target {
+            animation: scanPulse 2.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+
+    <!-- ==========================================
+         1. ШАПКА САЙТА (HEADER)
+    =========================================== -->
+    <header class="fixed top-0 left-0 w-full z-50 bg-[#0B0F17]/90 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+            
+            <!-- Логотип -->
+            <a href="#" class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-brandBlue flex items-center justify-center font-heading font-extrabold text-white text-lg">S</div>
+                <span class="font-heading font-bold text-xl tracking-tight text-white">STARK<span class="text-brandCyan">VISION</span></span>
+            </a>
+
+            <!-- Меню навигации -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+                <a href="#about" class="hover:text-brandCyan transition-colors">О продукте</a>
+                <a href="#specs" class="hover:text-brandCyan transition-colors">Характеристики</a>
+                <a href="#hud" class="hover:text-brandCyan transition-colors">Симулятор HUD</a>
+                <a href="#config" class="hover:text-brandCyan transition-colors">Настройки ИИ</a>
+                <a href="#pricing" class="hover:text-brandCyan transition-colors">Цены</a>
+            </nav>
+
+            <!-- Кнопка действия -->
+            <a href="#pricing" class="hidden sm:inline-block px-5 py-2.5 rounded-xl bg-brandBlue text-white font-medium text-sm hover:bg-blue-600 transition-all shadow-lg shadow-brandBlue/20">
+                Предзаказ
+            </a>
+        </div>
+    </header>
+
+
+    <!-- ==========================================
+         2. ГЛАВНЫЙ ЭКРАН (HERO)
+    =========================================== -->
+    <section class="pt-32 pb-20 px-4 max-w-7xl mx-auto min-h-screen flex flex-col justify-center">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            
+            <!-- Левая колонка: Заголовок и описание -->
+            <div class="space-y-6 text-left">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-brandCyan text-xs font-semibold uppercase tracking-wider">
+                    <span>🚀 Школьный стартап-проект</span>
+                </div>
+
+                <h1 class="font-heading font-extrabold text-4xl sm:text-5xl lg:text-6xl text-white leading-tight">
+                    Умные AR-очки с <span class="text-transparent bg-clip-text bg-gradient-to-r from-brandCyan to-brandBlue">персональным ИИ</span>
+                </h1>
+
+                <p class="text-slate-400 text-base sm:text-lg leading-relaxed">
+                    Концепция умных очков нового поколения в стиле EDITH. Автоматическое определение параметров человека, вывод инфографики прямо на линзу и приватные ответы ассистента в ваш Bluetooth-наушник.
+                </p>
+
+                <!-- Кнопки -->
+                <div class="flex flex-wrap gap-4 pt-2">
+                    <a href="#hud" class="px-7 py-3.5 rounded-xl bg-brandBlue text-white font-semibold text-sm hover:bg-blue-600 transition-all shadow-lg shadow-brandBlue/25 flex items-center gap-2">
+                        <span>👁️ Посмотреть симулятор HUD</span>
+                    </a>
+                    <a href="#pricing" class="px-7 py-3.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 font-semibold text-sm hover:bg-slate-700 transition-all">
+                        Оформить предзаказ
+                    </a>
+                </div>
+
+                <!-- Быстрые фичи -->
+                <div class="grid grid-cols-3 gap-4 pt-6 border-t border-white/10 text-xs sm:text-sm text-slate-400">
+                    <div>
+                        <div class="text-white font-bold text-base sm:text-lg">48 грамм</div>
+                        <div>Легче аналогов</div>
+                    </div>
+                    <div>
+                        <div class="text-white font-bold text-base sm:text-lg">MicroLED</div>
+                        <div>Четкость 1080p</div>
+                    </div>
+                    <div>
+                        <div class="text-white font-bold text-base sm:text-lg">8 часов</div>
+                        <div>Автономная работа</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Правая колонка: Реалистичное фото очков -->
+            <div class="relative">
+                <div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl custom-card group">
+                    <img 
+                        src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=1000&q=80" 
+                        alt="Smart AR Glasses STARK VISION" 
+                        class="w-full h-[380px] sm:h-[450px] object-cover group-hover:scale-105 transition-transform duration-500"
+                        onerror="this.src='https://placehold.co/800x600/121826/00E5FF?text=STARK+VISION+GLASSES'"
+                    >
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0B0F17] via-transparent to-transparent"></div>
+                    
+                    <!-- Лейбл на фото -->
+                    <div class="absolute bottom-4 left-4 right-4 p-4 rounded-xl bg-slate-900/80 backdrop-blur-md border border-white/10 flex justify-between items-center text-xs">
+                        <div>
+                            <div class="text-white font-bold">STARK VISION Pro</div>
+                            <div class="text-slate-400">Оправа: Легкий титановый сплав</div>
+                        </div>
+                        <span class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 font-semibold">В наличии</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- ==========================================
+         3. ТЕХНИЧЕСКИЕ ХАРАКТЕРИСТИКИ (ТТХ)
+    =========================================== -->
+    <section id="specs" class="py-20 px-4 bg-slate-950/50 border-y border-white/5">
+        <div class="max-w-7xl mx-auto space-y-12">
+            
+            <div class="text-center space-y-3 max-w-2xl mx-auto">
+                <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-white">Технические характеристики</h2>
+                <p class="text-slate-400 text-sm sm:text-base">Передовое железо, умещенное в корпус обычных стильных солнцезащитных очков.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Карточка 1 -->
+                <div class="custom-card p-6 rounded-2xl space-y-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-brandCyan text-xl">
+                        📺
+                    </div>
+                    <h3 class="font-heading font-bold text-white text-lg">MicroLED Дисплей</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Микропроекция высокого разрешения 1080p с яркостью до 3000 нит. Текст и инфографику чётко видно даже при ярком солнечном свете.
+                    </p>
+                </div>
+
+                <!-- Карточка 2 -->
+                <div class="custom-card p-6 rounded-2xl space-y-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-brandCyan text-xl">
+                        📷
+                    </div>
+                    <h3 class="font-heading font-bold text-white text-lg">Камеры & LiDAR</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Широкоугольная 12 МП камера и компактный LiDAR сканер для точного определения расстояния до объектов и сканирования людей.
+                    </p>
+                </div>
+
+                <!-- Карточка 3 -->
+                <div class="custom-card p-6 rounded-2xl space-y-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-brandCyan text-xl">
+                        🧠
+                    </div>
+                    <h3 class="font-heading font-bold text-white text-lg">Нейропроцессор NPU</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Двухпроцессорная система с выделенным модулем ИИ для распознавания лиц, предметов и силуэтов без задержек.
+                    </p>
+                </div>
+
+                <!-- Карточка 4 -->
+                <div class="custom-card p-6 rounded-2xl space-y-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-brandCyan text-xl">
+                        🎧
+                    </div>
+                    <h3 class="font-heading font-bold text-white text-lg">Bluetooth 5.3</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Мгновенное подключение беспроводных наушников. ИИ может отвечать вам прямо в ухо, сохраняя конфиденциальность.
+                    </p>
+                </div>
+
+                <!-- Карточка 5 -->
+                <div class="custom-card p-6 rounded-2xl space-y-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-brandCyan text-xl">
+                        🔋
+                    </div>
+                    <h3 class="font-heading font-bold text-white text-lg">Автономность</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        До 8 часов непрерывной работы. Комплектный футляр-пауэрбанк обеспечивает еще 3 полных заряда в дороге.
+                    </p>
+                </div>
+
+                <!-- Карточка 6 -->
+                <div class="custom-card p-6 rounded-2xl space-y-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-brandCyan text-xl">
+                        ⚖️
+                    </div>
+                    <h3 class="font-heading font-bold text-white text-lg">Вес 48 грамм</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Благодаря сверхлегким материалам очки можно носить весь день без усталости и боли в области переносицы.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ==========================================
+         4. СИМУЛЯТОР ЛИНЗЫ (HUD DISPLAY)
+    =========================================== -->
+    <section id="hud" class="py-20 px-4 max-w-6xl mx-auto">
+        <div class="text-center space-y-3 mb-10">
+            <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-white">Интерактивный симулятор линзы</h2>
+            <p class="text-slate-400 text-sm sm:text-base">Посмотрите, как выглядит интерфейс дополненной реальности глазами владельца очков.</p>
+        </div>
+
+        <!-- Окно симуляции -->
+        <div class="custom-card rounded-2xl p-4 sm:p-8 border-2 border-brandBlue/30 relative overflow-hidden shadow-2xl">
+            
+            <!-- Верхний статус-бар очков -->
+            <div class="flex justify-between items-center border-b border-white/10 pb-4 font-mono text-xs text-brandCyan">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>HUD SYSTEM: ACTIVE</span>
+                </div>
+                <div>РЕЖИМ: СКАНИРОВАНИЕ ОКТРУЖЕНИЯ</div>
+                <div id="hud-clock">12:00:00</div>
+            </div>
+
+            <!-- Экран сканирования -->
+            <div class="hud-grid rounded-xl my-6 p-6 min-h-[320px] flex flex-col md:flex-row justify-between items-center gap-6 relative">
+                
+                <!-- Левый блок: Состояние -->
+                <div class="bg-slate-900/90 p-4 rounded-xl border border-white/10 text-xs font-mono space-y-2 w-full md:w-64">
+                    <div class="text-brandCyan font-bold">СТАТУС ПОДКЛЮЧЕНИЯ:</div>
+                    <div class="text-slate-300">• Камера: 1080p @ 60 FPS</div>
+                    <div class="text-slate-300">• LiDAR: Дистанция 2.4м</div>
+                    <div class="text-emerald-400" id="hud-audio-status">• Наушник: Подключен (BT)</div>
+                </div>
+
+                <!-- Центр: Сканирующий прицел -->
+                <div class="scan-target flex flex-col items-center justify-center my-4">
+                    <div class="w-40 h-40 rounded-full border-2 border-dashed border-brandCyan flex items-center justify-center relative">
+                        <div class="w-24 h-24 rounded-full border border-blue-500/50 flex items-center justify-center">
+                            <div class="w-3 h-3 bg-brandCyan rounded-full"></div>
+                        </div>
+                    </div>
+                    <span class="mt-3 px-3 py-1 rounded bg-brandCyan/10 border border-brandCyan/30 font-mono text-[11px] text-brandCyan">
+                        ОБЪЕКТ ЗАХВАЧЕН
+                    </span>
+                </div>
+
+                <!-- Правый блок: Данные о человеке -->
+                <div class="bg-slate-900/90 p-4 rounded-xl border border-white/10 text-xs font-mono space-y-2 w-full md:w-64">
+                    <div class="text-brandCyan font-bold">АНАЛИЗ ОБЪЕКТА:</div>
+                    <div class="flex justify-between"><span>Рост:</span> <span class="text-white">~178 см</span></div>
+                    <div class="flex justify-between"><span>Вес:</span> <span class="text-white">~70 кг</span></div>
+                    <div class="flex justify-between"><span>Возраст:</span> <span class="text-white">16-18 лет</span></div>
+                    <div class="flex justify-between"><span>Соцсети:</span> <span class="text-emerald-400">Telegram / VK</span></div>
+                </div>
+
+            </div>
+
+            <!-- Нижняя панель подсказок -->
+            <div class="bg-brandBlue/10 border border-brandBlue/30 rounded-xl p-3 font-mono text-xs text-center flex flex-col sm:flex-row justify-between items-center gap-2 text-slate-200">
+                <div>💬 ИИ-Ответ: <span id="hud-ai-response" class="text-brandCyan">"Объект распознан. Открыть сопутствующую информацию?"</span></div>
+                <div class="px-2.5 py-1 rounded bg-slate-900 border border-white/10 text-[10px] text-slate-400">
+                    Ассистент: <span id="hud-ai-name" class="text-white font-bold">ДЖАРВИС</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- ==========================================
+         5. ИНТЕРАКТИВНЫЕ НАСТРОЙКИ ИИ И ТРАНСЛЯЦИЯ
+    =========================================== -->
+    <section id="config" class="py-20 px-4 max-w-4xl mx-auto">
+        <div class="custom-card rounded-2xl p-6 sm:p-10 border border-white/10 space-y-8">
+            
+            <div class="text-center space-y-2">
+                <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-white">Управление ИИ и трансляцией</h2>
+                <p class="text-slate-400 text-sm">Настройте имя вашего ассистента и выберите удобный вариант получения ответов.</p>
+            </div>
+
+            <!-- 1. Имя ИИ -->
+            <div class="space-y-3 max-w-md mx-auto">
+                <label class="block text-xs font-semibold text-brandCyan text-center uppercase tracking-wider">Как будут звать твоего ИИ?</label>
+                <div class="flex gap-2">
+                    <input 
+                        type="text" 
+                        id="input-ai-name" 
+                        value="Джарвис" 
+                        placeholder="Например: Джарвис, ЭДИТ, Пятница"
+                        class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-white/15 text-white font-medium text-sm focus:outline-none focus:border-brandBlue"
+                    >
+                    <button 
+                        onclick="saveAIName()"
+                        class="px-5 py-3 rounded-xl bg-brandBlue text-white font-semibold text-sm hover:bg-blue-600 transition-all"
+                    >
+                        Сохранить
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. Выбор способа вывода ответов -->
+            <div class="space-y-3 pt-4 border-t border-white/10">
+                <div class="text-xs font-semibold text-brandCyan text-center uppercase tracking-wider">Куда ИИ отправляет ответы:</div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    
+                    <button 
+                        id="opt-hud-only" 
+                        onclick="selectOutputMode('hud')"
+                        class="p-4 rounded-xl border-2 border-brandBlue bg-brandBlue/10 text-left transition-all"
+                    >
+                        <div class="font-bold text-white text-sm mb-1">1. Только линзы (HUD)</div>
+                        <div class="text-xs text-slate-400">Ответы ИИ и инфографика выводятся исключительно текстом на стекло очков. Без звука.</div>
+                    </button>
+
+                    <button 
+                        id="opt-bt-headset" 
+                        onclick="selectOutputMode('bt')"
+                        class="p-4 rounded-xl border border-white/10 bg-slate-900 text-left opacity-70 hover:opacity-100 transition-all"
+                    >
+                        <div class="font-bold text-white text-sm mb-1">2. Bluetooth-наушник</div>
+                        <div class="text-xs text-slate-400">Инфографика идет на линзы, а голосовой ответ озвучивается в ваш беспроводной наушник.</div>
+                    </button>
+
+                </div>
+            </div>
+
+            <!-- 3. Кнопка подключить к ПК/Монитору -->
+            <div class="pt-4 border-t border-white/10 text-center space-y-3">
+                <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Дополнительный вывод изображения</div>
+                <button 
+                    onclick="toggleExternalMonitor()" 
+                    id="btn-monitor"
+                    class="px-6 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 text-sm font-semibold hover:bg-slate-700 transition-all inline-flex items-center gap-2"
+                >
+                    <span>🖥️ Транслировать на внешний монитор / ПК</span>
+                </button>
+                <div id="monitor-status" class="text-xs text-slate-500 hidden">
+                    🟢 Подключение установлено. Картинка очков передается на внешний экран.
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- ==========================================
+         6. ЦЕНЫ И СРАВНЕНИЕ (ПРЕЗЕНТАЦИЯ)
+    =========================================== -->
+    <section id="pricing" class="py-20 px-4 bg-slate-950/50 border-t border-white/5">
+        <div class="max-w-7xl mx-auto space-y-16">
+            
+            <div class="text-center space-y-3 max-w-2xl mx-auto">
+                <h2 class="font-heading font-extrabold text-3xl sm:text-4xl text-white">Комплектация и цены</h2>
+                <p class="text-slate-400 text-sm sm:text-base">Доступная стоимость для стартапа с большими возможностями.</p>
+            </div>
+
+            <!-- Карточки цен -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                
+                <!-- Базовая версия -->
+                <div class="custom-card p-8 rounded-2xl space-y-6 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="inline-block px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-semibold">Базовый комплект</div>
+                        <h3 class="font-heading font-bold text-2xl text-white">STARK VISION Standard</h3>
+                        <div class="text-4xl font-extrabold text-white">$299 <span class="text-sm font-normal text-slate-400">/ ~27 000 руб.</span></div>
+                        
+                        <ul class="space-y-3 text-sm text-slate-300 border-t border-white/10 pt-4">
+                            <li class="flex items-center gap-2">✓ AR-очки STARK VISION</li>
+                            <li class="flex items-center gap-2">✓ Прозрачные стандартные линзы</li>
+                            <li class="flex items-center gap-2">✓ Зарядный защитный футляр</li>
+                            <li class="flex items-center gap-2">✓ Базовый ИИ-ассистент</li>
+                            <li class="flex items-center gap-2">✓ Подключение Bluetooth-наушника</li>
+                        </ul>
+                    </div>
+                    <button onclick="alert('Спасибо за предзаказ! Проект создан в учебных целях.')" class="w-full py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm transition-all">
+                        Заказать Standard
+                    </button>
+                </div>
+
+                <!-- Pro версия -->
+                <div class="custom-card p-8 rounded-2xl space-y-6 border-2 border-brandBlue flex flex-col justify-between relative shadow-xl shadow-brandBlue/10">
+                    <div class="absolute -top-3.5 right-6 px-3 py-1 rounded-full bg-brandBlue text-white text-xs font-bold uppercase tracking-wider">
+                        Популярный выбор
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="inline-block px-3 py-1 rounded-full bg-brandBlue/20 text-brandCyan text-xs font-semibold">PRO Комплект</div>
+                        <h3 class="font-heading font-bold text-2xl text-white">STARK VISION Pro</h3>
+                        <div class="text-4xl font-extrabold text-white">$449 <span class="text-sm font-normal text-slate-400">/ ~40 000 руб.</span></div>
+                        
+                        <ul class="space-y-3 text-sm text-slate-300 border-t border-white/10 pt-4">
+                            <li class="flex items-center gap-2">✓ Все функции стандартной версии</li>
+                            <li class="flex items-center gap-2 text-brandCyan">✓ Фотохромные хамелеон-линзы (темнеют на солнце)</li>
+                            <li class="flex items-center gap-2 text-brandCyan">✓ Увеличенный аккумулятор (+50% времени)</li>
+                            <li class="flex items-center gap-2">✓ Премиальный титановый корпус</li>
+                            <li class="flex items-center gap-2">✓ Расширенный сканер людей и соцсетей</li>
+                        </ul>
+                    </div>
+                    <button onclick="alert('Спасибо за предзаказ версии PRO! Проект создан в учебных целях.')" class="w-full py-3.5 rounded-xl bg-brandBlue hover:bg-blue-600 text-white font-semibold text-sm transition-all shadow-lg shadow-brandBlue/20">
+                        Заказать Pro Версию
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Таблица сравнения -->
+            <div class="space-y-6 pt-10 border-t border-white/10">
+                <h3 class="font-heading font-bold text-2xl text-white text-center">Сравнение с аналогами</h3>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[600px] text-sm">
+                        <thead>
+                            <tr class="border-b border-white/10 text-slate-400 font-heading">
+                                <th class="p-4">Характеристика</th>
+                                <th class="p-4 text-brandCyan font-bold">STARK VISION</th>
+                                <th class="p-4">Ray-Ban Meta</th>
+                                <th class="p-4">Apple Vision Pro</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5 text-slate-300">
+                            <tr>
+                                <td class="p-4 font-semibold text-white">Вывод инфографики на линзы</td>
+                                <td class="p-4 text-emerald-400 font-bold">Есть (MicroLED)</td>
+                                <td class="p-4 text-rose-400">Нет (Только камера)</td>
+                                <td class="p-4 text-emerald-400">Есть (VR/AR гарнитура)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-semibold text-white">Вес устройства</td>
+                                <td class="p-4 text-emerald-400 font-bold">48 грамм</td>
+                                <td class="p-4 text-slate-300">49 грамм</td>
+                                <td class="p-4 text-rose-400">600+ грамм</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-semibold text-white">Сканер параметров человека</td>
+                                <td class="p-4 text-emerald-400 font-bold">Есть (LiDAR + ИИ)</td>
+                                <td class="p-4 text-rose-400">Нет</td>
+                                <td class="p-4 text-rose-400">Нет</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-semibold text-white">Цена</td>
+                                <td class="p-4 text-emerald-400 font-bold">$299 - $449</td>
+                                <td class="p-4 text-slate-300">$299</td>
+                                <td class="p-4 text-rose-400">$3,499</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- ==========================================
+         7. ПОДВАЛ (FOOTER)
+    =========================================== -->
+    <footer class="py-10 px-4 border-t border-white/10 text-center text-slate-500 text-xs space-y-3">
+        <div class="max-w-7xl mx-auto space-y-2">
+            <div class="font-heading font-bold text-sm text-slate-300">STARK VISION — Проект умных очков с ИИ</div>
+            <p>Школьный проект по информатике • 9 Класс • Тема: «Искусственный интеллект и технологии дополненной реальности (AR)»</p>
+            <p>© 2026 Все права защищены. Выполнено в учебных целях.</p>
+        </div>
+    </footer>
+
+
+    <!-- ==========================================
+         СКРИПТЫ И ЛОГИКА (JAVASCRIPT)
+    =========================================== -->
+    <script>
+        // Функция обновления часов на HUD
+        function startHUDClock() {
+            const clockEl = document.getElementById('hud-clock');
+            setInterval(() => {
+                const d = new Date();
+                clockEl.innerText = d.toTimeString().split(' ')[0];
+            }, 1000);
+        }
+        startHUDClock();
+
+        // Сохранение имени ИИ
+        function saveAIName() {
+            const nameInput = document.getElementById('input-ai-name').value.trim() || 'Джарвис';
+            const upperName = nameInput.toUpperCase();
+            
+            document.getElementById('hud-ai-name').innerText = upperName;
+            document.getElementById('hud-ai-response').innerText = `"Системы обновлены, сэр. Я ${upperName}, готов к работе."`;
+        }
+
+        // Выбор режима вывода (Только линзы / Bluetooth)
+        function selectOutputMode(mode) {
+            const btnHud = document.getElementById('opt-hud-only');
+            const btnBt = document.getElementById('opt-bt-headset');
+            const hudAudioStatus = document.getElementById('hud-audio-status');
+
+            if (mode === 'hud') {
+                btnHud.className = "p-4 rounded-xl border-2 border-brandBlue bg-brandBlue/10 text-left transition-all";
+                btnBt.className = "p-4 rounded-xl border border-white/10 bg-slate-900 text-left opacity-70 hover:opacity-100 transition-all";
+                hudAudioStatus.innerText = "• Наушник: Отключен (Без звука)";
+                hudAudioStatus.className = "text-slate-400";
+            } else {
+                btnBt.className = "p-4 rounded-xl border-2 border-brandBlue bg-brandBlue/10 text-left transition-all";
+                btnHud.className = "p-4 rounded-xl border border-white/10 bg-slate-900 text-left opacity-70 hover:opacity-100 transition-all";
+                hudAudioStatus.innerText = "• Наушник: Подключен (BT)";
+                hudAudioStatus.className = "text-emerald-400";
+            }
+        }
+
+        // Переключатель трансляции на монитор
+        let monitorConnected = false;
+        function toggleExternalMonitor() {
+            const statusEl = document.getElementById('monitor-status');
+            const btnEl = document.getElementById('btn-monitor');
+
+            monitorConnected = !monitorConnected;
+            if (monitorConnected) {
+                statusEl.classList.remove('hidden');
+                btnEl.classList.add('border-emerald-500', 'text-emerald-400');
+            } else {
+                statusEl.classList.add('hidden');
+                btnEl.classList.remove('border-emerald-500', 'text-emerald-400');
+            }
+        }
+    </script>
+</body>
+</html>
